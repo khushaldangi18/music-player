@@ -29,7 +29,7 @@
                <p id="artist-name">Add a song to play</p>
 
                <audio id="song">
-                    <!-- No default source -->
+                    <!-- No default song -->
                </audio>
                
                <input type="range" value="0" id="progress">
@@ -57,17 +57,16 @@
           let songFile = document.getElementById("song-file");
           let songImg = document.querySelector(".song-img");
           
-          // Add event listener for file input
           songFile.addEventListener("change", function() {
                const file = this.files[0];
                if (file) {
                     const objectURL = URL.createObjectURL(file);
                     song.src = objectURL;
                     
-                    // Extract file name without extension
+                    //Extract file name without extension
                     let fileName = file.name.replace(/\.[^/.]+$/, "");
                     
-                    // Try to parse artist from filename (assuming format: "Artist - Title")
+                    //Try to parse artist from filename
                     let artist = "Unknown Artist";
                     if (fileName.includes(" - ")) {
                          const parts = fileName.split(" - ");
@@ -78,11 +77,11 @@
                     songTitle.textContent = fileName;
                     artistName.textContent = artist;
                     
-                    // Enable play button
+                    //Enable play button
                     document.querySelector(".controls div:nth-child(2)").style.opacity = "1";
                     document.querySelector(".controls div:nth-child(2)").style.pointerEvents = "auto";
                     
-                    // Auto-play the song after a short delay to ensure it's loaded
+                    //Auto-play the song after a short delay to ensure it's loaded
                     setTimeout(() => {
                          song.play();
                          ctrlIcon.classList.add("fa-pause");
@@ -97,7 +96,7 @@
                progress.max = song.duration;
                progress.value = song.currentTime;
                
-               // Format and display duration
+               //Format and display duration
                let mins = Math.floor(song.duration / 60);
                let secs = Math.floor(song.duration % 60);
                duration.textContent = mins + ":" + (secs < 10 ? "0" + secs : secs);
@@ -130,7 +129,7 @@
           setInterval(() => {
                progress.value = song.currentTime;
                
-               // Update current time display
+               //Update current time display
                let mins = Math.floor(song.currentTime / 60);
                let secs = Math.floor(song.currentTime % 60);
                currentTime.textContent = mins + ":" + (secs < 10 ? "0" + secs : secs);
