@@ -41,16 +41,24 @@ nav .circle{
      border: 8px solid #fff;
      box-shadow: 0 10px 80px rgba(255, 26, 26, 0.22);
 }
-.music-player h1{
-     font-size: 20px;
-     font-weight: 400;
-     color: #fff;
-     margin: 10px;
+.music-player h1 {
+    font-size: 20px;
+    font-weight: 400;
+    color: #fff;
+    margin: 10px 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
 }
-.music-player p{
-     font-size: 14px;
-     color: #fff;
-     /* margin-bottom: 10px; */
+.music-player p {
+    font-size: 14px;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+    margin-bottom: 20px;
 }
 .time-display {
      display: flex;
