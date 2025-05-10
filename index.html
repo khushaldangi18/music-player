@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <meta charset="UTF-8">
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Music Player</title>
+     <link rel="stylesheet" href="style.css">
+     <script src="https://kit.fontawesome.com/4c6a60f776.js" crossorigin="anonymous"></script>
+</head>
+<body>
+     <div class="container">
+          <div class="music-player">
+               <nav>
+                    <div class="circle">
+                         <i class="fa-solid fa-angle-left"></i>
+                    </div>
+                    <div class="circle">
+                         <i class="fa-solid fa-bars"></i>
+                    </div>
+               </nav>
+               <div class="file-input">
+                    <label for="song-file" class="file-label">
+                         <i class="fa-solid fa-plus"></i> Add Song
+                    </label>
+                    <input type="file" id="song-file" accept="audio/*" style="display: none;">
+               </div>
+               <img src="media/thumbnail.png" class="song-img">
+               <h1 id="song-title">No song selected</h1>
+               <p id="artist-name">Add a song to play</p>
+
+               <audio id="song">
+                    <!-- No default source -->
+               </audio>
+               
+               <input type="range" value="0" id="progress">
+               <div class="time-display">
+                    <span id="current-time">0:00</span>
+                    <span id="duration">0:00</span>
+               </div>
+
+               <div class="controls">
+                    <div><i class="fa-solid fa-backward"></i></div>
+                    <div onclick="playPause()"><i class="fa-solid fa-play" id="ctrlIcon"></i></div>
+                    <div><i class="fa-solid fa-forward"></i></div>
+               </div>
+          </div>
+     </div>
+
+     <script>
+          let progress = document.getElementById("progress");
+          let song = document.getElementById("song");
+          let ctrlIcon = document.getElementById("ctrlIcon");
+          let currentTime = document.getElementById("current-time");
+          let duration = document.getElementById("duration");
+          let songTitle = document.getElementById("song-title");
+          let artistName = document.getElementById("artist-name");
+          let songFile = document.getElementById("song-file");
+          let songImg = document.querySelector(".song-img");
+          
+          // Add event listener for file input
+          songFile.addEventListener("change", function() {
+               const file = this.files[0];
+               if (file) {
+                    const objectURL = URL.createObjectURL(file);
+                    song.src = objectURL;
+                    
+                    // Extract file name without extension
+                    let fileName = file.name.replace(/\.[^/.]+$/, "");
+                    
+                    // Try to parse artist from filename (assuming format: "Artist - Title")
+                    let artist = "Unknown Artist";
+                    if (fileName.includes(" - ")) {
+                         const parts = fileName.split(" - ");
+                         artist = parts[0];
+                         fileName = parts[1];
+                    }
+                    
+                    songTitle.textContent = fileName;
+                    artistName.textContent = artist;
+                    
+                    // Enable play button
+                    document.querySelector(".controls div:nth-child(2)").style.opacity = "1";
+                    document.querySelector(".controls div:nth-child(2)").style.pointerEvents = "auto";
+                    
+                    // Auto-play the song after a short delay to ensure it's loaded
+                    setTimeout(() => {
+                         song.play();
+                         ctrlIcon.classList.add("fa-pause");
+                         ctrlIcon.classList.remove("fa-play");
+                         songImg.classList.add("rotate");
+                         songImg.classList.remove("paused");
+                    }, 100);
+               }
+          });
+          
+          song.onloadedmetadata = function(){
+               progress.max = song.duration;
+               progress.value = song.currentTime;
+               
+               // Format and display duration
+               let mins = Math.floor(song.duration / 60);
+               let secs = Math.floor(song.duration % 60);
+               duration.textContent = mins + ":" + (secs < 10 ? "0" + secs : secs);
+          }
+
+          function playPause(){
+               if(!song.src) {
+                    // Show toast if no song is loaded
+                    const toast = document.getElementById("toast");
+                    toast.className = "toast show";
+                    setTimeout(function(){ toast.className = toast.className.replace("show", ""); }, 3000);
+                    return;
+               }
+               
+               if(ctrlIcon.classList.contains("fa-pause")){
+                    song.pause();
+                    ctrlIcon.classList.remove("fa-pause");
+                    ctrlIcon.classList.add("fa-play");
+                    songImg.classList.add("paused");
+               }
+               else{
+                    song.play();
+                    ctrlIcon.classList.add("fa-pause");
+                    ctrlIcon.classList.remove("fa-play");
+                    songImg.classList.add("rotate");
+                    songImg.classList.remove("paused");
+               }
+          }
+
+          setInterval(() => {
+               progress.value = song.currentTime;
+               
+               // Update current time display
+               let mins = Math.floor(song.currentTime / 60);
+               let secs = Math.floor(song.currentTime % 60);
+               currentTime.textContent = mins + ":" + (secs < 10 ? "0" + secs : secs);
+          }, 500);
+
+          progress.onchange = function(){
+               song.currentTime = progress.value;
+               song.play();
+               ctrlIcon.classList.remove("fa-play");
+               ctrlIcon.classList.add("fa-pause");
+               songImg.classList.add("rotate");
+               songImg.classList.remove("paused");
+          }
+
+     </script>
+     <div id="toast" class="toast">Please add a song to play</div>
+</body>
+</html>
